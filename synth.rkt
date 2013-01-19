@@ -19,12 +19,14 @@
   (* s fs))
 
 ;; assumes array of floats in [-1.0,1.0]
-(define (signal->integer-sequence signal)
+;; assumes gain in [0,1], which determines how loud the output is
+(define (signal->integer-sequence signal #:gain [gain 1])
   (for/vector #:length (array-size signal)
               ([sample (in-array signal)])
     (max 0 (min (sub1 (expt 2 bits-per-sample)) ; clamp
                 (inexact->exact
                  (floor (* (+ sample 1.0) ; center at 1, instead of 0
+                           gain
                            (expt 2 (sub1 bits-per-sample)))))))))
 
 
@@ -52,5 +54,5 @@
 
 (define sin-test (build-array `#(,(seconds->samples 2)) (sine-wave 440)))
 (with-output-to-file "foo.wav" #:exists 'replace
-  (lambda () (write-wav (signal->integer-sequence sin-test))))
-(plot-signal (build-array #(200) (sine-wave 440)))
+  (lambda () (write-wav (signal->integer-sequence sin-test #:gain 1/4))))
+;; (plot-signal (build-array #(200) (sine-wave 440)))
