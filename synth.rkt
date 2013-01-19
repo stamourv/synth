@@ -20,8 +20,8 @@
 
 ;; assumes array of floats in [-1.0,1.0]
 (define (signal->integer-sequence signal)
-  ;; TODO give a #:size argument to for/vector
-  (for/vector ([sample (in-array signal)])
+  (for/vector #:length (array-size signal)
+              ([sample (in-array signal)])
     (max 0 (min (sub1 (expt 2 bits-per-sample)) ; clamp
                 (inexact->exact
                  (floor (* (+ sample 1.0) ; center at 1, instead of 0
