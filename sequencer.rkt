@@ -1,6 +1,6 @@
 #lang racket
 
-(require math/array)
+(require math/array racket/flonum racket/unsafe/ops)
 
 (require "synth.rkt")
 
@@ -93,22 +93,24 @@
 ;; Shorter signals are repeated to match the length of the longest.
 ;; Normalizes output to be within [-1,1].
 ;; TODO use structs for these things
-(define (mix s0 . ss)
-  ;; To normalize, we first downscale the signals by the sum of the weights.
-  (define weights (map second (cons s0 ss)))
+(define (mix . ss)
+  ;; To normalize, we downscale the signals by the sum of the weights.
+  (define weights (for/list ([s (in-list ss)])
+                    (exact->inexact (second s))))
   (define downscale-factor (apply + weights))
-  (define (scale-signal s)
-    (define weight (second s))
-    (array-map (lambda (x) (* weight (/ x downscale-factor)))
-               (first s)))
-  (parameterize ([array-broadcasting 'permissive]) ; repeat short signals
-    (for/fold ([res (scale-signal s0)])
-        ([s (in-list ss)])
-      ;; TODO could use fl+ if I made sure everything generated floats
-      ;; TODO fuse the scaling and the adding, instead of doing n traversals
-      (array+ res (scale-signal s)))
-    ;; (apply array-map + (map scale-signal (cons s0 ss)))
-    ))
+  ;; TODO original took ~39 secs, ~34 with loop fusion, ~32 with unsafe flonum ops, ~25 with more loop fusion
+  ;;  -> how much of that is typed/untyped boundary?
+  ;;  -> figure out how to automatically deforest, doing it by hand is silly
+  ;; TODO profile. at this point, maybe `sequence' is the bottleneck
+  (parameterize ([array-broadcasting 'permissive]) ; repeat short signals    
+    (apply array-map
+           (lambda xs
+             (for/fold ([sum 0.0])
+                 ([x (in-list xs)]
+                  [w (in-list weights)])
+               (unsafe-fl+ sum
+                           (unsafe-fl* (unsafe-fl/ x downscale-factor) w))))
+           (map first ss))))
 ;; TODO doesn't belong in sequencer.rkt. mixing.rkt?
 
 ;; repeats n times the sequence encoded by the pattern, at tempo bpm

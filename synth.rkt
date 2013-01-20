@@ -1,6 +1,6 @@
 #lang racket
 
-(require math/array)
+(require math/array racket/flonum racket/unsafe/ops)
 
 (require "wav-encode.rkt") ;; TODO does not accept arrays directly
 
@@ -33,39 +33,42 @@
 (define-syntax-rule (array-lambda (i) body ...)
   (lambda (i*) (let ([i (vector-ref i* 0)]) body ...)))
 
+;; These all need to return floats.
+;; TODO use TR? would also optimize for us
+
 (define (sine-wave freq)
-  (define f (/ (* freq 2 pi) fs))
-  (array-lambda (x) (sin (* f x))))
+  (define f (exact->inexact (/ (* freq 2.0 pi) fs)))
+  (array-lambda (x) (unsafe-flsin (unsafe-fl* f (unsafe-fx->fl x)))))
 
 (define (square-wave freq)
   (define sample-period (freq->sample-period freq))
   (define sample-period/2 (quotient sample-period 2))
   (array-lambda (x)
     ;; 1 for the first half of the cycle, -1 for the other half
-    (define x* (modulo x sample-period))
-    (if (> x* sample-period/2) -1.0 1.0)))
+    (define x* (unsafe-fxmodulo x sample-period))
+    (if (unsafe-fx> x* sample-period/2) -1.0 1.0)))
 
 
 (define ((make-sawtooth-wave coeff) freq)
   (define sample-period (freq->sample-period freq))
-  (define sample-period/2 (quotient sample-period 2))
+  (define sample-period/2 (->fl (quotient sample-period 2)))
   (array-lambda (x)
     ;; gradually goes from -1 to 1 over the whole cycle
-    (define x* (modulo x sample-period))
-    (* coeff (- (/ x* sample-period/2) 1.0))))
+    (define x* (unsafe-fx->fl (modulo x sample-period)))
+    (unsafe-fl* coeff (unsafe-fl- (unsafe-fl/ x* sample-period/2) 1.0))))
 (define sawtooth-wave         (make-sawtooth-wave 1.0))
 (define inverse-sawtooth-wave (make-sawtooth-wave -1.0))
 
 (define (triangle-wave freq)
   (define sample-period (freq->sample-period freq))
   (define sample-period/2 (quotient sample-period 2))
-  (define sample-period/4 (quotient sample-period 4))
+  (define sample-period/4 (->fl (quotient sample-period 4)))
   (array-lambda (x)
     ;; go from 1 to -1 for the first half of the cycle, then back up
-    (define x* (modulo x sample-period))
-    (if (> x* sample-period/2)
-        (- (/ x* sample-period/4)    3.0)
-        (+ (/ x* sample-period/4 -1) 1.0))))
+    (define x* (unsafe-fx->fl (modulo x sample-period)))
+    (if (unsafe-fx> x* sample-period/2)
+        (unsafe-fl- (unsafe-fl/ x* sample-period/4) 3.0)
+        (unsafe-fl+ (unsafe-fl* -1.0 (unsafe-fl/ x* sample-period/4)) 1.0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
