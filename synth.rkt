@@ -6,6 +6,9 @@
 
 ;; TODO try to get deforestation for arrays. does that require
 ;;   non-strict arrays? lazy arrays?
+(array-strictness #f)
+;; TODO this slows down a bit, it seems, but improves memory use
+
 
 (provide fs seconds->samples)
 
