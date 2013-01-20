@@ -27,7 +27,7 @@
 ;;                  0.5))
 ;;       "scale.wav")
 
-;; TODO have a better data entry method, esp. for pauses
+;; ;; TODO have a better data entry method, esp. for pauses
 ;; (emit (sequence 3 (list (chord 'C 4 2 'major-arpeggio)
 ;;                         (chord 'C 4 1 'minor-arpeggio)
 ;;                         '(#f . 2))
@@ -36,7 +36,7 @@
 
 (time (emit (mix (list (sequence 2 (list (chord 'C 3 3 'major-arpeggio)
                                          (chord 'C 3 3 'minor-arpeggio))
-                                 120 sine-wave)
+                                 120 square-wave)
                        1)
                  (list (sequence 2 (append (scale 'C 4 1 'major-arpeggio)
                                            (scale 'C 4 1 'minor-arpeggio))
