@@ -77,6 +77,3 @@
                       (function (note-freq (car note)))
                       (lambda (x) 0.0))]) ; pause
            (build-array (vector (* samples-per-beat (cdr note))) f))))))
-
-;; TODO try moving just the mixer to TR, to see if that's enough
-;;   sequencer's the hard part to add types to
