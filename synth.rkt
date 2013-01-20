@@ -22,12 +22,8 @@
 ;;; Oscillators
 
 ;; array functions receive a vector of indices
-;; array-lambdas accept either single arguments or 1-vectors
-;; TODO probably woefully inefficient
 (define-syntax-rule (array-lambda (i) body ...)
-  (match-lambda
-   [(vector i) body ...]
-   [i          body ...]))
+  (lambda (i*) (let ([i (vector-ref i* 0)]) body ...)))
 
 (define (sine-wave freq)
   (define f (/ (* freq 2 pi) fs))
