@@ -1,6 +1,6 @@
 #lang racket
 
-(require math/array racket/flonum racket/unsafe/ops)
+(require math/array)
 
 (require "wav-encode.rkt") ;; TODO does not accept arrays directly
 
@@ -38,24 +38,24 @@
 
 (define (sine-wave freq)
   (define f (exact->inexact (/ (* freq 2.0 pi) fs)))
-  (array-lambda (x) (unsafe-flsin (unsafe-fl* f (unsafe-fx->fl x)))))
+  (array-lambda (x) (sin (* f (exact->inexact x)))))
 
 (define (square-wave freq)
   (define sample-period (freq->sample-period freq))
   (define sample-period/2 (quotient sample-period 2))
   (array-lambda (x)
     ;; 1 for the first half of the cycle, -1 for the other half
-    (define x* (unsafe-fxmodulo x sample-period))
-    (if (unsafe-fx> x* sample-period/2) -1.0 1.0)))
+    (define x* (modulo x sample-period))
+    (if (> x* sample-period/2) -1.0 1.0)))
 
 
 (define ((make-sawtooth-wave coeff) freq)
   (define sample-period (freq->sample-period freq))
-  (define sample-period/2 (->fl (quotient sample-period 2)))
+  (define sample-period/2 (quotient sample-period 2))
   (array-lambda (x)
     ;; gradually goes from -1 to 1 over the whole cycle
-    (define x* (unsafe-fx->fl (modulo x sample-period)))
-    (unsafe-fl* coeff (unsafe-fl- (unsafe-fl/ x* sample-period/2) 1.0))))
+    (define x* (exact->inexact (modulo x sample-period)))
+    (* coeff (- (/ x* sample-period/2) 1.0))))
 (define sawtooth-wave         (make-sawtooth-wave 1.0))
 (define inverse-sawtooth-wave (make-sawtooth-wave -1.0))
 

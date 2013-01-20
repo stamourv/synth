@@ -40,8 +40,6 @@
                        1)
                  (list (sequence 2 (append (scale 'C 4 1 'major-arpeggio)
                                            (scale 'C 4 1 'minor-arpeggio))
-                                 120 sine-wave)
+                                 120 sawtooth-wave)
                        2))
             "arpeggio.wav"))
-;; TODO oops, OOM-killed after 3m22s (if I have the pattern pre-processing
-;;   thing in `sequence'), otherwise takes ~30s, and not much memory
