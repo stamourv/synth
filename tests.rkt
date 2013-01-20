@@ -1,6 +1,6 @@
 #lang racket
 
-(require math/array "synth.rkt" "sequencer.rkt")
+(require math/array "synth.rkt" "sequencer.rkt" "mixer.rkt")
 
 ;; (define sin-test (build-array `#(,(seconds->samples 2)) (sine-wave 440)))
 ;; (define square-test (build-array `#(,(seconds->samples 2)) (square-wave 440)))
@@ -34,14 +34,14 @@
 ;;                 120 sine-wave)
 ;;       "chords.wav")
 
-(emit (mix (list (sequence 2 (list (chord 'C 3 3 'major-arpeggio)
-                                   (chord 'C 3 3 'minor-arpeggio))
-                           120 sine-wave)
-                 1)
-           (list (sequence 2 (append (scale 'C 4 1 'major-arpeggio)
-                                     (scale 'C 4 1 'minor-arpeggio))
-                           120 sine-wave)
-                 2))
-      "arpeggio.wav")
+(time (emit (mix (list (sequence 2 (list (chord 'C 3 3 'major-arpeggio)
+                                         (chord 'C 3 3 'minor-arpeggio))
+                                 120 sine-wave)
+                       1)
+                 (list (sequence 2 (append (scale 'C 4 1 'major-arpeggio)
+                                           (scale 'C 4 1 'minor-arpeggio))
+                                 120 sine-wave)
+                       2))
+            "arpeggio.wav"))
 ;; TODO oops, OOM-killed after 3m22s (if I have the pattern pre-processing
 ;;   thing in `sequence'), otherwise takes ~30s, and not much memory

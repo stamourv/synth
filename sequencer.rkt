@@ -2,7 +2,7 @@
 
 (require math/array racket/flonum racket/unsafe/ops)
 
-(require "synth.rkt")
+(require "synth.rkt" "mixer.rkt")
 
 (provide scale chord sequence mix)
 
@@ -54,30 +54,6 @@
 (define (chord root octave duration type . notes*)
   (define notes (apply scale root octave duration type notes*))
   (cons (map car notes) duration))
-
-;; Weighted sum of signals, receives a list of lists (signal weight).
-;; Shorter signals are repeated to match the length of the longest.
-;; Normalizes output to be within [-1,1].
-;; TODO use structs for these things
-(define (mix . ss)
-  ;; To normalize, we downscale the signals by the sum of the weights.
-  (define weights (for/list ([s (in-list ss)])
-                    (exact->inexact (second s))))
-  (define downscale-factor (apply + weights))
-  ;; TODO original took ~39 secs, ~34 with loop fusion, ~32 with unsafe flonum ops, ~25 with more loop fusion
-  ;;  -> how much of that is typed/untyped boundary?
-  ;;  -> figure out how to automatically deforest, doing it by hand is silly
-  ;; TODO profile. at this point, maybe `sequence' is the bottleneck
-  (parameterize ([array-broadcasting 'permissive]) ; repeat short signals    
-    (apply array-map
-           (lambda xs
-             (for/fold ([sum 0.0])
-                 ([x (in-list xs)]
-                  [w (in-list weights)])
-               (unsafe-fl+ sum
-                           (unsafe-fl* (unsafe-fl/ x downscale-factor) w))))
-           (map first ss))))
-;; TODO doesn't belong in sequencer.rkt. mixing.rkt?
 
 ;; repeats n times the sequence encoded by the pattern, at tempo bpm
 ;; pattern is a list of either single notes (note . duration) or
