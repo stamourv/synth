@@ -59,20 +59,6 @@
 ;; pattern is a list of either single notes (note . duration) or
 ;; chords ((note ...) . duration) or pauses (#f . duration)
 (define (sequence n pattern tempo function)
-  ;; TODO for some reason, this causes memory to blow up
-  ;; ;; simple preprocessing, if we have chords in the pattern, each note must be
-  ;; ;; a chord (to solve normalization issues)
-  ;; (when (foldl (lambda (x y) (or x (list? (car y)))) ;; TODO refactor
-  ;;              #f
-  ;;              pattern)
-  ;;   (set! pattern (map (lambda (x)
-  ;;                        (if (list? (car x))
-  ;;                            x
-  ;;                            `(((,(car  x) ,(cadr x)))
-  ;;                              #f
-  ;;                              ,(caddr x)))) ; construct a 1-note chord
-  ;;                      pattern)))
-
   (define samples-per-beat (/ (* fs 60) tempo))
   (array-append*
    (for*/list ([i    (in-range n)] ; repeat the whole pattern
