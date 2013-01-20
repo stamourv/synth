@@ -28,9 +28,10 @@
 ;;       "scale.wav")
 
 ;; TODO have a better data entry method, esp. for pauses
-;; (emit (sequence 3 (list (chord 'C 4 2 'major-arpeggio) (chord 'C 4 1 'minor-arpeggio) '(#f #f 2))
+;; (emit (sequence 3 (list (chord 'C 4 2 'major-arpeggio)
+;;                         (chord 'C 4 1 'minor-arpeggio)
+;;                         '(#f . 2))
 ;;                 120 sine-wave)
-;;       ;; TODO that is enough to take 1 minute (!) at 60bpm (with 'major and 'minor, not arpeggios)
 ;;       "chords.wav")
 
 (emit (mix (list (sequence 2 (list (chord 'C 3 3 'major-arpeggio)
