@@ -65,14 +65,10 @@
                [note (in-list  pattern)])
      (if (list? (car note)) ; chord
          (apply mix
-                (map (lambda (x)
-                       (list (sequence ;; TODO refactor
-                               1
-                               `((,x ; note
-                                  . ,(cdr note))) ; duration
-                               tempo function)
-                             1)) ; all of equal weight
-                     (car note)))
+                (for/list ([x (in-list (car note))])
+                  (list (sequence 1 (list (cons x (cdr note))) ; duration
+                                  tempo function)
+                        1))) ; all of equal weight
          (let ([f (if (car note)
                       (function (note-freq (car note)))
                       (lambda (x) 0.0))]) ; pause
