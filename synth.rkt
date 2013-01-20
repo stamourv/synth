@@ -62,13 +62,13 @@
 (define (triangle-wave freq)
   (define sample-period (freq->sample-period freq))
   (define sample-period/2 (quotient sample-period 2))
-  (define sample-period/4 (->fl (quotient sample-period 4)))
+  (define sample-period/4 (quotient sample-period 4))
   (array-lambda (x)
     ;; go from 1 to -1 for the first half of the cycle, then back up
-    (define x* (unsafe-fx->fl (modulo x sample-period)))
-    (if (unsafe-fx> x* sample-period/2)
-        (unsafe-fl- (unsafe-fl/ x* sample-period/4) 3.0)
-        (unsafe-fl+ (unsafe-fl* -1.0 (unsafe-fl/ x* sample-period/4)) 1.0))))
+    (define x* (modulo x sample-period))
+    (if (> x* sample-period/2)
+        (- (/ x* sample-period/4) 3.0)
+        (+ (/ x* sample-period/4 -1.0) 1.0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
