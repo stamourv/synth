@@ -55,6 +55,13 @@
   (define notes (apply scale root octave duration type notes*))
   (cons (map car notes) duration))
 
+;; Accepts notes or pauses, but not chords.
+(define (synthesize-note note n-samples function)
+  (build-array (vector n-samples)
+               (if note
+                   (function (note-freq note))
+                   (lambda (x) 0.0)))) ; pause
+
 ;; repeats n times the sequence encoded by the pattern, at tempo bpm
 ;; pattern is a list of either single notes (note . duration) or
 ;; chords ((note ...) . duration) or pauses (#f . duration)
@@ -66,10 +73,10 @@
      (if (list? (car note)) ; chord
          (apply mix
                 (for/list ([x (in-list (car note))])
-                  (list (sequence 1 (list (cons x (cdr note))) ; duration
-                                  tempo function)
+                  (list (synthesize-note x
+                                         (* samples-per-beat (cdr note))
+                                         function)
                         1))) ; all of equal weight
-         (let ([f (if (car note)
-                      (function (note-freq (car note)))
-                      (lambda (x) 0.0))]) ; pause
-           (build-array (vector (* samples-per-beat (cdr note))) f))))))
+         (synthesize-note (car note)
+                          (* samples-per-beat (cdr note))
+                          function)))))
