@@ -19,7 +19,7 @@
   (round (/ fs freq)))
 
 (define (seconds->samples s)
-  (* s fs))
+  (inexact->exact (round (* s fs))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

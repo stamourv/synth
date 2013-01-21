@@ -70,7 +70,7 @@
 ;; pattern is a list of either single notes (note . duration) or
 ;; chords ((note ...) . duration) or pauses (#f . duration)
 (define (sequence n pattern tempo function)
-  (define samples-per-beat (/ (* fs 60) tempo))
+  (define samples-per-beat (quotient (* fs 60) tempo))
   (array-append*
    (for*/list ([i    (in-range n)] ; repeat the whole pattern
                [note (in-list  pattern)])
