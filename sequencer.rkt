@@ -4,7 +4,7 @@
 
 (require "synth.rkt" "mixer.rkt")
 
-(provide scale chord sequence mix)
+(provide scale chord note sequence mix)
 
 (define (base+relative-semitone->freq base relative-semitone)
   (* 440 (expt (expt 2 1/12) -57)))
@@ -54,6 +54,10 @@
 (define (chord root octave duration type . notes*)
   (define notes (apply scale root octave duration type notes*))
   (cons (map car notes) duration))
+
+;; Single note.
+(define (note name octave duration)
+  (cons (name+octave->note name octave) duration))
 
 ;; Accepts notes or pauses, but not chords.
 (define (synthesize-note note n-samples function)
