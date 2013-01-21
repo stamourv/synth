@@ -30,7 +30,7 @@
   (define root-note (name+octave->note root octave))
   (define notes
     (if (eq? mode 'custom)
-        notes
+        notes*
         (case mode
           ((major ionian)                '(0 2 4 5 7 9 11 12))
           ((minor minor-natural aeolian) '(0 2 3 5 7 8 10 12))
