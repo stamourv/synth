@@ -110,4 +110,4 @@
 
 (define (emit signal file)
   (with-output-to-file file #:exists 'replace
-    (lambda () (write-wav (signal->integer-sequence signal #:gain 1/2)))))
+    (lambda () (write-wav (signal->integer-sequence signal #:gain 1/3)))))
