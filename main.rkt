@@ -6,12 +6,15 @@
                                    "mixer.rkt"
                                    "drum.rkt")
                      mix sequence drum)
-         (rename-out [mix/export      mix]
-                     [sequence/export sequence]
-                     [drum/export     drum])
-         (all-from-out racket))
+         (rename-out [mix/export            mix]
+                     [sequence/export       sequence]
+                     [drum/export           drum]
+                     [#%module-begin/export #%module-begin])
+         (except-out (all-from-out racket) #%module-begin))
 
-(require (for-syntax syntax/parse))
+(require (for-syntax syntax/parse) racket/stxparam)
+
+(define-syntax-parameter current-bpm (syntax-rules ()))
 
 (begin-for-syntax
  (define-syntax-class mixand
@@ -42,14 +45,23 @@
 (define-syntax (sequence/export stx)
   (syntax-parse stx
     ;; TODO OoO keywords, support for repetitions
-    [(_ function:expr (~datum #:bpm) bpm:expr (~datum #:times) times:expr
+    [(_ function:expr (~datum #:times) times:expr
         [note:sequend ...])
-     #'(sequence times (list note.res ...) bpm function)]))
+     #'(sequence times (list note.res ...) (current-bpm) function)]))
 
 (define-syntax (drum/export stx)
   (syntax-parse stx
-    [(_ (~datum #:bpm) bpm:expr (~datum #:times) times:expr [notes ...])
-     #'(drum times '(notes ...) bpm)]))
+    [(_ (~datum #:times) times:expr [notes ...])
+     #'(drum times '(notes ...) (current-bpm))]))
 
 (module reader syntax/module-reader
   #:language 'synth-array)
+
+(define-syntax (#%module-begin/export stx)
+  (syntax-parse stx
+    [(_ #:output output:expr #:bpm bpm:expr
+        signal ...)
+     #'(#%module-begin
+        (syntax-parameterize
+         ([current-bpm (syntax-rules () [(_) bpm])])
+         (emit (mix/export signal ...) output)))]))
