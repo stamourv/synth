@@ -80,10 +80,10 @@
   (for/vector #:length (array-size signal)
               ([sample (in-array signal)])
     (max 0 (min (sub1 (expt 2 bits-per-sample)) ; clamp
-                (inexact->exact
-                 (floor (* (+ sample 1.0) ; center at 1, instead of 0
-                           gain
-                           (expt 2 (sub1 bits-per-sample)))))))))
+                (exact-floor
+                 (* gain
+                    (* (+ sample 1.0) ; center at 1, instead of 0
+                       (expt 2 (sub1 bits-per-sample)))))))))
 
 
 (require plot)
@@ -110,4 +110,4 @@
 
 (define (emit signal file)
   (with-output-to-file file #:exists 'replace
-    (lambda () (write-wav (signal->integer-sequence signal #:gain 1/3)))))
+    (lambda () (write-wav (signal->integer-sequence signal #:gain 0.3)))))
