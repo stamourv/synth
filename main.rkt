@@ -1,7 +1,5 @@
 #lang racket
 
-;; TODO have this be a #lang
-
 (require "synth.rkt" "sequencer.rkt" "mixer.rkt" "drum.rkt")
 (provide (except-out (all-from-out "synth.rkt"
                                    "sequencer.rkt"
@@ -10,7 +8,8 @@
                      mix sequence drum)
          (rename-out [mix/export      mix]
                      [sequence/export sequence]
-                     [drum/export     drum]))
+                     [drum/export     drum])
+         (all-from-out racket))
 
 (require (for-syntax syntax/parse))
 
@@ -51,3 +50,6 @@
   (syntax-parse stx
     [(_ (~datum #:bpm) bpm:expr (~datum #:times) times:expr [notes ...])
      #'(drum times '(notes ...) bpm)]))
+
+(module reader syntax/module-reader
+  #:language 'synth-array)

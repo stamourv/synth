@@ -1,6 +1,4 @@
-#lang racket
-
-(require "../main.rkt")
+#lang synth-array
 
 (emit
  (mix
