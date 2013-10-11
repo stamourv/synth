@@ -29,5 +29,5 @@
 ;; TODO see if moving this here is enough of an improvement
 ;;  -> meh, ~25s -> ~15s (not counting typechecking time)
 ;;  -> for future measurements of the type boundary, just use no-check
-;; TODO maybe declutter unsafe ops in generators and elsewhere, if they don't
-;;  affect performance much
+
+;; TODO provide a function that repeats a given signal (and use for funky town)

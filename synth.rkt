@@ -70,6 +70,12 @@
         (- (/ x* sample-period/4) 3.0)
         (+ (/ x* sample-period/4 -1.0) 1.0))))
 
+;; TODO make sure that all of these actually produce the right frequency
+;;  (i.e. no off-by-an-octave errors)
+
+;; TODO add weighted-harmonics, so we can approximate instruments
+;;  and take example from old synth
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide emit plot-signal)
