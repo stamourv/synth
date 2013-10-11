@@ -55,7 +55,7 @@
      #'(drum times '(notes ...) (current-bpm))]))
 
 (module reader syntax/module-reader
-  #:language 'synth-array)
+  #:language 'synth)
 
 (define-syntax (#%module-begin/export stx)
   (syntax-parse stx

@@ -1,4 +1,4 @@
-#lang synth-array
+#lang synth
 
 #:output "funky-town.wav"
 #:bpm 380
