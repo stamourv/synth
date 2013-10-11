@@ -1,8 +1,7 @@
-#lang racket
+#lang synth
 
-(require "../main.rkt")
+#:output "square.wav"
+#:bpm 120
 
 ;; same example as sine.scm and harmonics.scm, but with a square wave
-(emit (sequence 2 (list (note 'A 3 1) (note 'G 3 1) (note 'F 3 2))
-                120 square-wave)
-      "square.wav")
+(sequence square-wave #:times 2 [(A 3) (G 3) (F 3 2)])

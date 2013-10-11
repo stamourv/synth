@@ -1,7 +1,8 @@
-#lang racket
+#lang synth
 
-(require "../main.rkt")
+#:output "custom-scale.wav"
+#:bpm 120
 
 ;; custom "scale"
-(emit (sequence 2 (scale 'C 3 1 'custom 0 4 0 3 0 7) 120 sine-wave)
-      "custom-scale.wav")
+(sequence sine-wave #:times 2
+          [(scale C 3 1 custom 0 4 0 3 0 7)])

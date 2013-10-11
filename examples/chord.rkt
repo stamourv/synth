@@ -1,10 +1,11 @@
-#lang racket
+#lang synth
 
-(require "../main.rkt")
+#:output "chord.wav"
+#:bpm 90
 
 ;; I-IV-V chord progression, using the chord generator
-(emit (sequence 1 (list (chord 'C 3 2 'major-arpeggio)
-                        (chord 'F 3 2 'major-arpeggio)
-                        (chord 'G 3 2 'major-arpeggio))
-                90 sine-wave)
-      "chord.wav")
+(sequence
+  sine-wave #:times 1
+  [(chord C 3 2 major-arpeggio)
+   (chord F 3 2 major-arpeggio)
+   (chord G 3 2 major-arpeggio)])

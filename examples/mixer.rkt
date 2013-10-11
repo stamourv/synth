@@ -1,11 +1,9 @@
-#lang racket
+#lang synth
 
-(require "../main.rkt")
+#:output "mixer.wav"
+#:bpm 60
 
 ;; mixer example, where both tracks have the same weight
-(emit (mix (list (sequence 1 (list (note 'C 3 2) (note 'E 3 2))
-                           60 sine-wave) 1)
-           (list (sequence 1 (list (note 'E 3 1) (note 'G 3 1)
-                                   (note 'F 3 1) (note 'A 3 1))
-                           60 sine-wave) 1))
-      "mixer.wav")
+;; note: there's an implicit call to `mix' at the top-level
+(mix (sequence sine-wave #:times 1 [(C 3 2) (E 3 2)])
+     (sequence sine-wave #:times 1 [(E 3) (G 3) (F 3) (A 3)]))

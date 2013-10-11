@@ -1,7 +1,7 @@
-#lang racket
+#lang synth
 
-(require "../main.rkt")
+#:output "drum2.wav"
+#:bpm 90
 
 ;; simple drum track
-(emit (drum 2 '(O X O X #f #f O X) 90)
-      "drum2.wav")
+(drum #:times 2 (O X O X #f #f O X))
