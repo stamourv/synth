@@ -1,4 +1,4 @@
 #lang info
 
 (define collection 'use-pkg-name)
-(define deps '("racket" "typed-racket" "math"))
+(define deps '("racket-lib" "typed-racket" "math"))
